@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	RECV_BUF_LEN = 1024
+	RECV_BUF_LEN = 2048
 )
 
 type callback func(string)
@@ -57,18 +57,22 @@ func (s *Server) Process() {
 }
 
 func (s *Server) Receive(conn net.Conn) {
-	buf := make([]byte, RECV_BUF_LEN)
-	n, err := conn.Read(buf)
-	if err != nil {
-		log.Debugf("Error reading:", err.Error())
-		return
-	}
 
-	data := string(buf)
+	for {
+		buf := make([]byte, RECV_BUF_LEN)
+		n, err := conn.Read(buf)
+		if err != nil {
+			log.Debugf("Closing connection")
+			conn.Close()
+			return
+		}
 
-	log.Debugf("received %v bytes of data = %s", n, data)
+		data := string(buf)
 
-	if !s.test && s.db != nil {
-		s.db.InsertData(data)
+		log.Debugf("received %s bytes of data = %s", n, data)
+
+		if !s.test && s.db != nil {
+			s.db.InsertData(data)
+		}
 	}
 }
