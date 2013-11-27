@@ -33,32 +33,35 @@ func New(user, pass, host, port, dbname, table string) *Db {
 func (d *Db) InsertData(data string) {
 
 	var t = time.Now()
+	var data2, data3, data4 int64
+	var waga float64
+	var err error
 
 	dataArr := strings.Split(data, ";")
 
-	// 1.0;2;3;4;123.123.123.123
-	insert := fmt.Sprintf("INSERT INTO %s(waga,data,wej1,wej2,wej3,ip) VALUES(?,?,?,?,?,?)", d.table)
-	log.Debugf("Inserting data: %s", data)
-
-	data2, err := strconv.ParseInt(dataArr[1], 10, 8)
-	checkErr(err)
-	data3, err := strconv.ParseInt(dataArr[2], 10, 8)
-	checkErr(err)
-	data4, err := strconv.ParseInt(dataArr[3], 10, 8)
-	checkErr(err)
-
-	waga, err := strconv.ParseFloat(dataArr[0], 32)
-	checkErr(err)
-
-	if err != nil {
+	if len(dataArr) != 5 {
+		log.Debugf("Bad data size. Got: %s, expected 5 fields", len(dataArr))
 		return
 	}
 
-	_, err = d.connection.Exec(insert, waga, t.Format(time.RFC3339), data2, data3, data4, dataArr[4])
+	log.Debugf("Inserting data: %s", data)
+	// 1.0;2;3;4;123.123.123.123
+	insert := fmt.Sprintf("INSERT INTO %s(waga,data,wej1,wej2,wej3,ip) VALUES(?,?,?,?,?,?)", d.table)
 
-	if err != nil {
-		log.Errorf(err.Error())
-	}
+	data2, err = strconv.ParseInt(dataArr[1], 10, 8)
+	checkErr(err)
+
+	data3, err = strconv.ParseInt(dataArr[2], 10, 8)
+	checkErr(err)
+
+	data4, err = strconv.ParseInt(dataArr[3], 10, 8)
+	checkErr(err)
+
+	waga, err = strconv.ParseFloat(dataArr[0], 32)
+	checkErr(err)
+
+	_, err = d.connection.Exec(insert, waga, t.Format(time.RFC3339), data2, data3, data4, dataArr[4])
+	checkErr(err)
 
 }
 
