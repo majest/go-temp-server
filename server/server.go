@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"fmt"
 	log "github.com/cihub/seelog"
-	m "github.com/majest/sambo-go-tcp-server/mysql"
 	"net"
 	"os"
 	"strings"
@@ -15,16 +14,18 @@ const (
 	RECV_BUF_LEN = 32
 )
 
+type Storage interface {
+	Save(string, string)
+}
+
 type callback func(string)
 
 type Server struct {
 	listener net.Listener
-	mysql    *m.Db
-	Call     callback
-	test     bool
-	db       *m.Db
 	buffer   map[string]*bytes.Buffer
 	lock     sync.Mutex
+	storage  Storage
+	port     string
 }
 
 func New(port string, test bool) *Server {
@@ -34,23 +35,24 @@ func New(port string, test bool) *Server {
 	} else {
 		log.Debug("Starting the server")
 	}
+
 	server := &Server{}
-	server.test = test
 	listener, err := net.Listen("tcp", fmt.Sprintf("0.0.0.0:%s", port))
 	if err != nil {
 		log.Errorf("error listening:", err.Error())
 		os.Exit(1)
 	}
+
 	server.listener = listener
 	server.buffer = make(map[string]*bytes.Buffer)
+	server.port = port
 	return server
 }
 
-func (s *Server) SetDb(db *m.Db) {
-	s.db = db
-}
+func (s *Server) Process(storage Storage) {
+	s.storage = storage
 
-func (s *Server) Process() {
+	log.Infof("Started TCP listener on port %v", s.port)
 	for {
 		conn, err := s.listener.Accept()
 		if err != nil {
@@ -72,34 +74,35 @@ func (s *Server) getBuffer(location string) *bytes.Buffer {
 	return s.buffer[location]
 }
 
-func (s *Server) CheckAndSave(location string) {
+func (s *Server) CheckAndSave(location string, storage Storage) {
 
 	// lock the method
 	s.lock.Lock()
 	defer s.lock.Unlock()
 
-	if !s.test && s.db != nil {
+	log.Debugf("Checking data for %s", location)
+	buffer := s.getBuffer(location)
+	data := buffer.String()
 
-		log.Debugf("Checking data for %s", location)
-		buffer := s.getBuffer(location)
-		data := buffer.String()
+	if strings.Contains(data, "\n") {
 
-		if strings.Contains(data, "$") {
+		log.Debugf("Processing and Saving data: %s", data)
+		// split by $
+		parts := strings.Split(data, "\n")
 
-			log.Debugf("Processing and Saving data: %s", data)
-			// split by $
-			parts := strings.Split(data, "$")
+		//log.Debugf("========= %v", []byte(parts[0]))
+		// add ip and insert data
+		log.Infof("got message with CR")
+		storage.Save(parts[0], location)
 
-			//log.Debugf("========= %v", []byte(parts[0]))
-			// add ip and insert data
-			s.db.InsertData(fmt.Sprintf("%s;%s", parts[0], location))
+		// clear buffer
+		buffer.Truncate(0)
 
-			// clear buffer
-			buffer.Truncate(0)
-
-			// add remaining part of the packet back tu buffer
-			buffer.WriteString(parts[1])
-		}
+		// add remaining part of the packet back to buffer
+		buffer.WriteString(parts[1])
+	} else {
+		log.Infof("got message without CR")
+		buffer.WriteString(data)
 	}
 }
 
@@ -130,6 +133,6 @@ func (s *Server) Receive(conn net.Conn) {
 		// get the remote address
 		location := conn.RemoteAddr().String()
 		s.getBuffer(location).WriteString(string(clear(buf)))
-		s.CheckAndSave(location)
+		s.CheckAndSave(location, s.storage)
 	}
 }
