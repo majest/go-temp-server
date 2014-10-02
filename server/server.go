@@ -86,7 +86,7 @@ func (s *Server) CheckAndSave(location string, storage Storage) {
 
 	if strings.Contains(data, "\n") {
 
-		log.Debugf("Processing and Saving data: %s", data)
+		//	log.Debugf("Processing and Saving data: %s", data)
 		// split by $
 		parts := strings.Split(data, "\n")
 

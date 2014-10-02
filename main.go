@@ -3,7 +3,7 @@ package main
 import (
 	"flag"
 	s "github.com/majest/go-temp-server/server"
-	storage "github.com/majest/go-temp-server/storage/websocket"
+	storage "github.com/majest/go-temp-server/storage/file"
 )
 
 var port string

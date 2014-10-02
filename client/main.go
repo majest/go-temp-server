@@ -9,7 +9,7 @@ import (
 func main() {
 	strEcho := "Halo\n"
 
-	servAddr := "arturg.co.uk:9002"
+	servAddr := "localhost:9002"
 	tcpAddr, err := net.ResolveTCPAddr("tcp", servAddr)
 	if err != nil {
 		println("ResolveTCPAddr failed:", err.Error())
