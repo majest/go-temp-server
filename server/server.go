@@ -121,7 +121,7 @@ func (s *Server) Receive(conn net.Conn) {
 
 	for {
 		buf := make([]byte, RECV_BUF_LEN)
-		n, err := conn.Read(buf)
+		_, err := conn.Read(buf)
 		if err != nil {
 			log.Debugf("Closing connection")
 			conn.Close()
