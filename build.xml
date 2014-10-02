@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="Vasstech" basedir="." default="build">
+    
+    <tstamp>
+    <format property="date" pattern="%s" locale="en"/>
+    </tstamp>
+    
+    <property file="${phing.dir}/build.properties"/>
+    <property name="build.dir" value="${phing.dir}/build" override="true" />
+    
+    <property name="release.dir.full" value="${release.dir}/${date}" override="true" />
+    <property name="release" value="${release.dir.full}/${release.file}" override="true" />
+    
+    <fileset id="php.classes" dir="${phing.dir}">
+        <include name="**/*.php" />
+        <include name="**/*.html" />
+        <include name="*.html" />
+    </fileset>
+
+    <target name="build:prep">
+        <echo msg="Removing ${build.dir} ..." />
+        <delete dir="${build.dir}" />
+        
+        <echo msg="Creating directory ${release.dir}" />
+        <mkdir dir="${release.dir.full}" />
+        
+    </target>
+    
+    <target name="build:dist" depends="build:prep">
+        <echo msg="Creating archive..." />
+
+        <tar destfile="${release}" compression="gzip">
+            <fileset dir="${phing.dir}">
+                <include name="nginx/*" />
+                <include name="index.html" />
+            </fileset>
+        </tar>
+
+        <echo msg="Files compressed at ${release} " />
+       
+    </target>
+    
+    <target name="build:dist:life" depends="build:dist">
+        <untar file="${release}" todir="${release.dir.full}" />
+        <delete file="${release}" />
+        <delete file="${release.link}" />
+        <symlink target="${release.dir.full}"  link="${release.link}" />
+    </target>
+  
+    <target name="build" depends="build:dist:life">
+    </target>
+</project>

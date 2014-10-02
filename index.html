@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta charset="UTF-8" />
-        <title>Sample of websocket with golang</title>
+        <title>tcp serv</title>
         <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
         <script>
       $(function() {
@@ -12,19 +12,10 @@
             var $div = $('#msg-list');            
             $('<div>').text(event.data).appendTo($div);
         };
-
-        // var $ul = $('#msg-list');
-        // $('#sendBtn').click(function(){
-        //   var data = $('#name').val();
-        //   ws.send(data);
-        //   console.log("送信メッセージ:" + data);
-        //   $('<li>').text(data).appendTo($ul);
-        // });
       });
         </script>
     </head>
     <body>
-            <input id="name" type="text" />
       <div id="msg-list"></div>
     </body>
 </html>

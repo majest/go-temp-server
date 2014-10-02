@@ -1,0 +1,6 @@
+[submodule "client/common"]
+	path = client/common
+	url = git@bitbucket.org:arturgrabowski/go-common.git
+[submodule "common"]
+	path = common
+	url = git@bitbucket.org:arturgrabowski/go-common.git
