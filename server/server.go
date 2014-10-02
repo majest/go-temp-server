@@ -80,7 +80,7 @@ func (s *Server) CheckAndSave(location string, storage Storage) {
 	s.lock.Lock()
 	defer s.lock.Unlock()
 
-	log.Debugf("Checking data for %s", location)
+	//log.Debugf("Checking data for %s", location)
 	buffer := s.getBuffer(location)
 	data := buffer.String()
 
@@ -92,7 +92,7 @@ func (s *Server) CheckAndSave(location string, storage Storage) {
 
 		//log.Debugf("========= %v", []byte(parts[0]))
 		// add ip and insert data
-		log.Infof("got message with CR")
+		//log.Infof("got message with CR")
 		storage.Save(parts[0], location)
 
 		// clear buffer
@@ -101,7 +101,7 @@ func (s *Server) CheckAndSave(location string, storage Storage) {
 		// add remaining part of the packet back to buffer
 		buffer.WriteString(parts[1])
 	} else {
-		log.Infof("got message without CR")
+		//log.Infof("got message without CR")
 		buffer.WriteString(data)
 	}
 }
@@ -128,7 +128,7 @@ func (s *Server) Receive(conn net.Conn) {
 			return
 		}
 
-		log.Debugf("received %v bytes. Data: %s", n, string(buf))
+		//log.Debugf("received %v bytes. Data: %s", n, string(buf))
 
 		// get the remote address
 		location := conn.RemoteAddr().String()

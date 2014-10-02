@@ -23,7 +23,7 @@ func New() *Storage {
 }
 
 func (s *Storage) Save(data, location string) {
-	log.Infof("Msg %+s", data)
+	log.Infof("Msg %+s ,location : %s", data, location)
 }
 
 func (s *Storage) Run() {
