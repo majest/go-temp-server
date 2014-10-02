@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	log "github.com/cihub/seelog"
+	"io"
 	"net"
 	"os"
 	"strings"
@@ -107,6 +108,10 @@ func (s *Server) CheckAndSave(location string, storage Storage) {
 	}
 }
 
+func (s *Server) Reply(conn net.Conn) {
+	io.Copy(conn, bytes.NewBufferString("OK\n"))
+}
+
 func clear(b []byte) []byte {
 	r := []byte{}
 
@@ -135,5 +140,6 @@ func (s *Server) Receive(conn net.Conn) {
 		location := conn.RemoteAddr().String()
 		s.getBuffer(location).WriteString(string(clear(buf)))
 		s.CheckAndSave(location, s.storage)
+		s.Reply(conn)
 	}
 }

@@ -1,15 +1,16 @@
 package main
 
 import (
+	"fmt"
 	"net"
 	"os"
 	"time"
 )
 
 func main() {
-	strEcho := "Sambo n00b!\n"
+	strEcho := "test message\n"
 
-	servAddr := "arturg.co.uk:9002"
+	servAddr := "localhost:9002"
 	tcpAddr, err := net.ResolveTCPAddr("tcp", servAddr)
 	if err != nil {
 		println("ResolveTCPAddr failed:", err.Error())
@@ -40,6 +41,15 @@ func main() {
 		// 		os.Exit(1)
 		// 	}
 		// }
+
+		reply := make([]byte, 1024)
+		_, err = conn.Read(reply)
+		if err != nil {
+			println("Write to server failed:", err.Error())
+			os.Exit(1)
+		}
+
+		fmt.Printf("reply %s\n", reply)
 
 		i++
 		time.Sleep(3 * time.Second)
