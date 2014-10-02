@@ -6,7 +6,7 @@
         <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
         <script>
       $(function() {
-        var ws = new WebSocket("ws://localhost:9003/listen");
+        var ws = new WebSocket("ws://tcp.modeo.co.uk:9003/listen");
         ws.onmessage = function(e) {
             console.log(event.data);
             var $div = $('#msg-list');            

@@ -50,7 +50,7 @@ func New() *Storage {
 func (s *Storage) Run() {
 	http.HandleFunc("/listen", s.listenHandler)
 	log.Infof("Starting websocket listener on port 9003")
-	err := http.ListenAndServe("localhost:9003", nil)
+	err := http.ListenAndServe("tcp.modeo.co.uk:9003", nil)
 	if err != nil {
 		panic("ListenAndServe: " + err.Error())
 	}
