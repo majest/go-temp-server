@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	strEcho := "Halo\n"
+	strEcho := "Sambo n00b!\n"
 
 	servAddr := "arturg.co.uk:9002"
 	tcpAddr, err := net.ResolveTCPAddr("tcp", servAddr)
@@ -33,13 +33,13 @@ func main() {
 
 		println("write to server = ", strEcho)
 
-		if i%5 == 0 {
-			_, err = conn.Write([]byte("\n"))
-			if err != nil {
-				println("Write to server failed:", err.Error())
-				os.Exit(1)
-			}
-		}
+		// if i%5 == 0 {
+		// 	_, err = conn.Write([]byte("\n"))
+		// 	if err != nil {
+		// 		println("Write to server failed:", err.Error())
+		// 		os.Exit(1)
+		// 	}
+		// }
 
 		i++
 		time.Sleep(3 * time.Second)

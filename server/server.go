@@ -55,6 +55,7 @@ func (s *Server) Process(storage Storage) {
 	log.Infof("Started TCP listener on port %v", s.port)
 	for {
 		conn, err := s.listener.Accept()
+		log.Infof("Connection established from %s", conn.RemoteAddr().String())
 		if err != nil {
 			log.Errorf("Error accept:", err.Error())
 			return
